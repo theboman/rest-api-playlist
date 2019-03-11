@@ -7,9 +7,15 @@ router.get('/ninjas', function(req, res, next){
     /* Ninja.find({}).then(function(ninjas){
         res.send(ninjas);
     }); */
-    Ninja.geoNear(
-        {type: 'Point', coordinates: [parseFloat(req.query.lng), parseFloat(req.query.lat)]},
-        {maxDistance: 100000, spherical: true}
+      Ninja.aggregate([
+        {
+            $geoNear: {
+                near: { type: "Point", coordinates: [ parseFloat(req.query.lng) , parseFloat(req.query.lat) ] },
+                maxDistance: 100000,
+                distanceField: "distance",
+                spherical: true
+            }
+        }
     ).then(function(ninjas){
         res.send(ninjas);
     }).catch(next);
